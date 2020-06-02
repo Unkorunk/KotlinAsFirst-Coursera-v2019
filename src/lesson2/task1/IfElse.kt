@@ -3,8 +3,7 @@
 package lesson2.task1
 
 import lesson1.task1.discriminant
-import kotlin.math.max
-import kotlin.math.sqrt
+import kotlin.math.*
 
 /**
  * Пример
@@ -117,7 +116,15 @@ fun rookOrBishopThreatens(
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int = if (b + c < a || a + b < c || a + c < b) -1 else {
+    val angle1 = acos((a * a + b * b - c * c) / (2 * a * b))
+    val angle2 = acos((a * a + c * c - b * b) / (2 * a * c))
+    val angle3 = PI - angle1 - angle2
+
+    if (angle1 > PI / 2 || angle2 > PI / 2 || angle3 > PI / 2) 2
+    else if (angle1 < PI / 2 && angle2 < PI / 2 && angle3 < PI / 2) 0
+    else 1
+}
 
 /**
  * Средняя
@@ -127,4 +134,9 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = if (c > b || d < a) -1 else {
+    val sorted = arrayOf(a, b, c, d)
+    sorted.sort()
+
+    sorted[2] - sorted[1]
+}

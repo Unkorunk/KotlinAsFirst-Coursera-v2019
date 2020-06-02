@@ -2,6 +2,8 @@
 
 package lesson6.task1
 
+import java.lang.IllegalArgumentException
+
 /**
  * Пример
  *
@@ -133,7 +135,35 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    var r = 0
+    var initilized = false
+
+    var operator = ""
+    expression.replace("+", " + ").replace("-", " - ").split(" ").filterNot { it.isEmpty() }.forEach {
+        if (it == "+" || it == "-") {
+            if (operator != "" || !initilized) throw IllegalArgumentException()
+            operator = it
+        } else {
+            val num = it.toIntOrNull() ?: throw IllegalArgumentException()
+            if (initilized) {
+                when (operator) {
+                    "+" -> r += num
+                    "-" -> r -= num
+                    else -> throw IllegalArgumentException()
+                }
+                operator = ""
+            } else {
+                initilized = true
+                r += num
+            }
+        }
+    }
+
+    if (operator != "") throw IllegalArgumentException()
+
+    return r
+}
 
 /**
  * Сложная
@@ -157,7 +187,27 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val pairs = description.split("; ")
+
+    var mostName = ""
+    var mostPrice = -1.0
+
+    for (pair in pairs) {
+        val nameAndPrice = pair.split(" ")
+        if (nameAndPrice.count() != 2) return ""
+
+        val price = nameAndPrice[1].toDoubleOrNull() ?: return ""
+        if (price < 0.0) return ""
+
+        if (price > mostPrice) {
+            mostName = nameAndPrice[0]
+            mostPrice = price
+        }
+    }
+
+    return mostName
+}
 
 /**
  * Сложная
