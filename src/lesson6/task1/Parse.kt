@@ -3,6 +3,7 @@
 package lesson6.task1
 
 import java.lang.IllegalArgumentException
+import kotlin.math.min
 
 /**
  * Пример
@@ -258,4 +259,77 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val conveyor = MutableList(cells) { 0 }
+    var sensor = cells / 2
+
+    if (commands.any { it !in listOf('>', '<', '+', '-', '[', ']', ' ') }) {
+        throw IllegalArgumentException()
+    }
+
+    var lft = 0
+    var rgh = 0
+    for (command in commands) {
+        when (command) {
+            ']' -> rgh++
+            '[' -> lft++
+        }
+
+        if (rgh > lft) throw IllegalArgumentException()
+    }
+    if (lft != rgh) throw IllegalArgumentException()
+
+    var commandIdx = 0
+    var commandCompleted = 0
+    while (commandCompleted < limit && commandIdx != commands.length) {
+        when (commands[commandIdx]) {
+            '>' -> {
+                sensor++
+                if (sensor >= cells) {
+                    throw IllegalStateException()
+                }
+            }
+            '<' -> {
+                sensor--
+                if (sensor < 0) {
+                    throw IllegalStateException()
+                }
+            }
+            '+' -> conveyor[sensor]++
+            '-' -> conveyor[sensor]--
+            '[' -> {
+                if (conveyor[sensor] == 0) {
+                    lft = 1
+                    rgh = 0
+
+                    while (lft != rgh) {
+                        commandIdx++
+                        when (commands[commandIdx]) {
+                            ']' -> rgh++
+                            '[' -> lft++
+                        }
+                    }
+                }
+            }
+            ']' -> {
+                if (conveyor[sensor] != 0) {
+                    lft = 0
+                    rgh = 1
+
+                    while (lft != rgh) {
+                        commandIdx--
+                        when (commands[commandIdx]) {
+                            ']' -> rgh++
+                            '[' -> lft++
+                        }
+                    }
+                }
+            }
+        }
+
+        commandIdx++
+        commandCompleted++
+    }
+
+    return conveyor
+}

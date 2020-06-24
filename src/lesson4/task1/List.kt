@@ -258,4 +258,75 @@ fun roman(n: Int): String = TODO()
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val mtx = listOf(
+        listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять"),
+        listOf(
+            "",
+            "десять",
+            "двадцать",
+            "тридцать",
+            "сорок",
+            "пятьдесят",
+            "шестьдесят",
+            "семьдесят",
+            "восемьдесят",
+            "девяносто"
+        ),
+        listOf("", "сто", "двести", "триста", "четыреста", "пятьсот", "шестьсот", "семьсот", "восемьсот", "девятьсот"),
+        listOf("", "одна", "две", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять")
+    )
+
+    val thousands = listOf(
+        "тысяч",
+        "тысяча",
+        "тысячи",
+        "тысячи",
+        "тысячи",
+        "тысяч",
+        "тысяч",
+        "тысяч",
+        "тысяч",
+        "тысяч"
+    )
+
+    val tens = listOf(
+        "десять",
+        "одиннадцать",
+        "двенадцать",
+        "тринадцать",
+        "четырнадцать",
+        "пятнадцать",
+        "шестнадцать",
+        "семнадцать",
+        "восемнадцать",
+        "девятнадцать"
+    )
+
+    var nStr = n.toString()
+    nStr = "0".repeat(6 - nStr.length) + nStr
+
+    val dts = nStr.toMutableList().map { it - '0' }
+
+    val rst = StringBuilder()
+
+    if (dts[0] * 100 + dts[1] * 10 + dts[2] != 0) {
+        rst.append("${mtx[2][dts[0]]} ")
+        when {
+            dts[1] * 10 + dts[2] in 10..20 ->
+                rst.append("${tens[dts[1] * 10 + dts[2] - 10]} ${thousands[0]} ")
+            else ->
+                rst.append("${mtx[1][dts[1]]} ${mtx[3][dts[2]]} ${thousands[dts[2]]} ")
+        }
+    }
+
+    rst.append("${mtx[2][dts[3]]} ")
+    when {
+        dts[4] * 10 + dts[5] in 10..20 ->
+            rst.append("${tens[dts[4] * 10 + dts[5] - 10]} ")
+        else ->
+            rst.append("${mtx[1][dts[4]]} ${mtx[0][dts[5]]} ")
+    }
+
+    return rst.toString().split(" ").filter { it.isNotBlank() }.joinToString(" ")
+}
